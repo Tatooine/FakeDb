@@ -1,0 +1,16 @@
+bin
+obj
+*.user
+*.suo
+*.psess
+*.Vsp
+App_Data
+*.results.xml
+packages
+_AzurePackage
+*.bak
+NuGetGallery.sln.docstates
+_ReSharper.NuGetGallery
+_PackagedWebsite
+TestResults
+Packages.dgml
