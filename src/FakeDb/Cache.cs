@@ -5,14 +5,14 @@ namespace FakeDb
 {
     public interface ICache
     {
-        IInternalSet For(Type type);
+        IInMemorySet For(Type type);
     }
 
     public class Cache : ICache
     {
         readonly IIdGenerator _idGenerator;
         readonly IObjectGraph _objectGraph;
-        readonly ConcurrentDictionary<Type, IInternalSet> _dictionary = new ConcurrentDictionary<Type, IInternalSet>();
+        readonly ConcurrentDictionary<Type, IInMemorySet> _dictionary = new ConcurrentDictionary<Type, IInMemorySet>();
 
         public Cache(IIdGenerator idGenerator, IObjectGraph objectGraph)
         {
@@ -23,9 +23,9 @@ namespace FakeDb
             _objectGraph = objectGraph;
         }
 
-        public IInternalSet For(Type type)
+        public IInMemorySet For(Type type)
         {
-            return _dictionary.GetOrAdd(FindMostCommonBase(type), _ => new InternalSet(_idGenerator, this, _objectGraph) );
+            return _dictionary.GetOrAdd(FindMostCommonBase(type), _ => new InMemorySet(_idGenerator, this, _objectGraph) );
         }
 
         static Type FindMostCommonBase(Type type)

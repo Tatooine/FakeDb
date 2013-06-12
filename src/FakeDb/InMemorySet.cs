@@ -1,70 +1,66 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace FakeDb
 {
-    public class InMemorySet<TEntity> : IDbSet<TEntity> where TEntity : class 
+    public interface IInMemorySet
     {
-        readonly IInternalSet _internalSet;
+        object Add(object item);
+        object Remove(object item);
+        ISet<object> Items { get; }
+    }
 
-        public InMemorySet(IInternalSet internalSet)
+    public class InMemorySet : IInMemorySet
+    {
+        readonly IIdGenerator _idGenerator;
+        readonly ICache _cache;
+        readonly IObjectGraph _objectGraph;
+        readonly HashSet<object> _set = new HashSet<object>();
+
+        public InMemorySet(IIdGenerator idGenerator, ICache cache, IObjectGraph objectGraph)
         {
-            if (internalSet == null) throw new ArgumentNullException("internalSet");
-            _internalSet = internalSet;
+            if (idGenerator == null) throw new ArgumentNullException("idGenerator");
+            if (cache == null) throw new ArgumentNullException("cache");
+            if (objectGraph == null) throw new ArgumentNullException("objectGraph");
+
+            _idGenerator = idGenerator;
+            _cache = cache;
+            _objectGraph = objectGraph;
         }
 
-        public IEnumerator<TEntity> GetEnumerator()
+        public object Add(object item)
         {
-            return _internalSet.Items.Cast<TEntity>().GetEnumerator();
+            if (_set.Contains(item))
+                return item;
+
+            var identified = _idGenerator.Identify(item);
+
+            _set.Add(identified);
+
+            Meterialize(identified);
+
+            return item;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public object Remove(object item)
         {
-            return _internalSet.Items.GetEnumerator();
+            _set.Remove(item);
+            return item;
         }
 
-        public Expression Expression { get; private set; }
-        public Type ElementType { get { return typeof (TEntity); } }
-        public IQueryProvider Provider { get; private set; }
+        public ISet<object> Items { get { return _set; } }
 
-        public TEntity Find(params object[] keyValues)
+        void Meterialize(object item)
         {
-            throw new NotImplementedException();
+            foreach (var obj in _objectGraph.Traverse(item))
+            {
+                if(obj == item)
+                    continue;
+
+                var s = (InMemorySet) _cache.For(obj.GetType());
+                if (!s._set.Contains(obj))
+                    s._set.Add(obj);
+            }
         }
-
-        public TEntity Add(TEntity entity)
-        {
-            _internalSet.Add(entity);
-            return entity;
-        }
-
-        public TEntity Remove(TEntity entity)
-        {
-            _internalSet.Remove(entity);
-            return entity;
-        }
-
-        public TEntity Attach(TEntity entity)
-        {
-            return entity;
-        }
-
-        public TEntity Create()
-        {
-            return Activator.CreateInstance<TEntity>();
-        }
-
-        public TDerivedEntity Create<TDerivedEntity>() where TDerivedEntity : class, TEntity
-        {
-            return Activator.CreateInstance<TDerivedEntity>();
-        }
-
-        public ObservableCollection<TEntity> Local { get { throw new NotSupportedException(); } }
-
     }
 }
