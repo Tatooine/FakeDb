@@ -47,6 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheFacts.cs" />
+    <Compile Include="InMemorySetFacts.cs" />
     <Compile Include="IdGeneratorFacts.cs" />
     <Compile Include="IFixture.cs" />
     <Compile Include="ObjectGraphFacts.cs" />
