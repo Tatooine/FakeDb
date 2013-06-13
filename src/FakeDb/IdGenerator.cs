@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading;
 
 namespace FakeDb
@@ -23,10 +24,29 @@ namespace FakeDb
             if (property.SetMethod == null)
                 return instance;
 
+            var pval = property.GetValue(instance);
+
+            if (!IsInitialValue(pval))
+                return instance;
+
             var nextId = Interlocked.Increment(ref _nextId);
 
             property.SetValue(instance, property.PropertyType == typeof(string) ? (object)nextId.ToString() : nextId);
             return instance;
+        }
+
+        static bool IsInitialValue(object obj)
+        {
+            if (obj == null)
+                return true;
+
+            Type type = obj.GetType();
+            if (type.IsValueType && Activator.CreateInstance(type).Equals(obj))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

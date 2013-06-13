@@ -55,5 +55,4 @@ namespace FakeDb.Tests
 
         public ICollection<Url> OutboundLinks { get; set; }
     }
-
 }
