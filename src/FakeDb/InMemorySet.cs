@@ -30,6 +30,9 @@ namespace FakeDb
 
         public object Add(object item)
         {
+            if(item == null)
+                throw new ArgumentNullException("item");
+
             if (_set.Contains(item))
                 return item;
 
@@ -58,8 +61,7 @@ namespace FakeDb
                     continue;
 
                 var s = (InMemorySet) _cache.For(obj.GetType());
-                if (!s._set.Contains(obj))
-                    s._set.Add(obj);
+                s.Add(obj);
             }
         }
     }
