@@ -17,6 +17,16 @@ namespace FakeDb.Tests
             }
 
             [Fact]
+            public void ShouldNotAssignIdToInitialisedIdProperty()
+            {
+                var instance = new Person{Id = 9};
+
+                instance = (Person)new IdGenerator().Identify(instance);
+
+                Assert.Equal(9, instance.Id);
+            }
+
+            [Fact]
             public void DoesNotThrowAnExceptionIfIdPropertyIsNotAvailable()
             {
                 new IdGenerator().Identify(new {Name = "Foo"});
@@ -28,7 +38,6 @@ namespace FakeDb.Tests
                 var a = (Address)new IdGenerator().Identify(new Address());
                 Assert.Equal("1", a.Id);
             }
-
         }
     }
 }
