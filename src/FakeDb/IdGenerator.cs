@@ -30,10 +30,10 @@ namespace FakeDb
 
             var nextId = Interlocked.Increment(ref _nextId);
 
-            property.SetValue(instance, property.PropertyType == typeof(string) ? (object)nextId.ToString() : nextId, null);
+            property.SetValue(instance, property.PropertyType == typeof(string) ? (object)nextId.ToString() : Convert.ChangeType(nextId, property.PropertyType), null);
             return instance;
         }
-
+        
         static bool IsInitialValue(object obj)
         {
             if (obj == null)

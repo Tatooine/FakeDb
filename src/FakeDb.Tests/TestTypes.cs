@@ -7,6 +7,11 @@ namespace FakeDb.Tests
         public int Id { get; protected set; }    
     }
 
+    public class Wheel
+    {
+        public short Id { get; set; }
+    }
+
     public class Person
     {
         public int Id { get; set; }

@@ -45,6 +45,12 @@ namespace FakeDb.Tests
                 var c = (Car)new IdGenerator().Identify(new Car());
                 Assert.Equal(1, c.Id);
             }
+
+            [Fact]
+            public void CanSetIdOfTypeShort()
+            {
+                Assert.Equal(1, ((Wheel)new IdGenerator().Identify(new Wheel())).Id);
+            }
         }
     }
 }
