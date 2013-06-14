@@ -15,13 +15,12 @@ namespace FakeDb
 
         public object Identify(object instance)
         {
-            var property = instance.GetType().GetProperty("Id",
-                                                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var property = instance.GetType().GetProperty("Id", ReflectionSettings.AllInstance);
 
             if (property == null)
                 return instance;
 
-            if (property.GetSetMethod() == null)
+            if (property.GetSetMethod(true) == null)
                 return instance;
 
             var pval = property.GetValue(instance, null);

@@ -2,6 +2,11 @@
 
 namespace FakeDb.Tests
 {
+    public class Car
+    {
+        public int Id { get; protected set; }    
+    }
+
     public class Person
     {
         public int Id { get; set; }
