@@ -4,6 +4,7 @@ obj
 *.suo
 *.psess
 *.Vsp
+*.nupkg
 App_Data
 *.results.xml
 packages
