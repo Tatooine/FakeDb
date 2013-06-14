@@ -38,6 +38,13 @@ namespace FakeDb.Tests
                 var a = (Address)new IdGenerator().Identify(new Address());
                 Assert.Equal("1", a.Id);
             }
+
+            [Fact]
+            public void SetsProtectedIdProperty()
+            {
+                var c = (Car)new IdGenerator().Identify(new Car());
+                Assert.Equal(1, c.Id);
+            }
         }
     }
 }
