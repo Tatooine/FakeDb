@@ -21,17 +21,17 @@ namespace FakeDb
             if (property == null)
                 return instance;
 
-            if (property.SetMethod == null)
+            if (property.GetSetMethod() == null)
                 return instance;
 
-            var pval = property.GetValue(instance);
+            var pval = property.GetValue(instance, null);
 
             if (!IsInitialValue(pval))
                 return instance;
 
             var nextId = Interlocked.Increment(ref _nextId);
 
-            property.SetValue(instance, property.PropertyType == typeof(string) ? (object)nextId.ToString() : nextId);
+            property.SetValue(instance, property.PropertyType == typeof(string) ? (object)nextId.ToString() : nextId, null);
             return instance;
         }
 

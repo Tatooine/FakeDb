@@ -30,7 +30,7 @@ namespace FakeDb
 
             foreach (var value in from p in t.GetProperties(ReflectionSettings.AllInstance) 
                                   where p.PropertyType.IsClass && !IgnoreTypes.Contains(p.PropertyType)
-                                  select p.GetValue(instance))
+                                  select p.GetValue(instance, null))
             {
                 if (value == null)
                     continue;
