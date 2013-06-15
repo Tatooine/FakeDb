@@ -46,6 +46,7 @@
     <Compile Include="Cache.cs" />
     <Compile Include="FakeDb.cs" />
     <Compile Include="IdGenerator.cs" />
+    <Compile Include="IMaterializationHook.cs" />
     <Compile Include="InMemorySet.cs" />
     <Compile Include="ObjectGraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
