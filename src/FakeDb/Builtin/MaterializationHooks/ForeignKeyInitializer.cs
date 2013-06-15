@@ -7,6 +7,8 @@ namespace FakeDb.Builtin.MaterializationHooks
     {
         public void Execute(object @object)
         {
+            if (@object == null) throw new ArgumentNullException("object");
+
             var properties = @object.GetType().GetProperties(ReflectionSettings.AllInstance);
 
             foreach (var property in properties)
@@ -20,6 +22,9 @@ namespace FakeDb.Builtin.MaterializationHooks
                     continue;
 
                 var relatedObject = property.GetValue(@object, null);
+
+                if(relatedObject == null)
+                    continue;                
 
                 var idProperty = relatedObject.GetType().GetProperty("Id");
 

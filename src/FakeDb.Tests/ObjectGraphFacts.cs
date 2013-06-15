@@ -40,6 +40,12 @@ namespace FakeDb.Tests
                 Assert.Equal(1, r.Length);
                 Assert.Contains(v, r);
             }
+
+            [Fact]
+            public void DoesNotReturnNullReferences()
+            {
+                Assert.DoesNotContain(null, new ObjectGraph().Traverse(new Person()));
+            }
         }
     }
 

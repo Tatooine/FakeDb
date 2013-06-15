@@ -23,6 +23,16 @@ namespace FakeDb.Tests.Builtin.MaterializationHooks
 
                 Assert.Equal(2, message.SenderId);
             }
+
+            [Fact]
+            public void SkipsIfForeignKeyObjectIsNotSet()
+            {
+                var message = new Message();
+
+                new ForeignKeyInitializer().Execute(message);
+
+                Assert.Equal(0, message.SenderId);
+            }
         }
 
         public class Message
