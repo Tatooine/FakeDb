@@ -11,11 +11,17 @@ namespace FakeDb
 
     public class IdGenerator : IIdGenerator
     {
+        readonly IIdPropertyFinder _idPropertyFinder;
         int _nextId;
+       
+        public IdGenerator(IIdPropertyFinder idPropertyFinder = null)
+        {
+            _idPropertyFinder = idPropertyFinder ?? new IdPropertyFinder();
+        }
 
         public object Identify(object instance)
         {
-            var property = instance.GetType().GetProperty("Id", ReflectionSettings.AllInstance);
+            var property = _idPropertyFinder.Find(instance.GetType());
 
             if (property == null)
                 return instance;

@@ -4,7 +4,8 @@ namespace FakeDb.Tests
 {
     public class Car
     {
-        public int Id { get; protected set; }    
+        public int Id { get; protected set; }
+        public int CarId { get; protected set; }
     }
 
     public class Wheel

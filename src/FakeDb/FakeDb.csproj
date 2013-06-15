@@ -46,6 +46,7 @@
     <Compile Include="Builtin\MaterializationHooks\ForeignKeyInitializer.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="FakeDb.cs" />
+    <Compile Include="IdPropertyFinder.cs" />
     <Compile Include="IdGenerator.cs" />
     <Compile Include="IMaterializationHook.cs" />
     <Compile Include="InMemorySet.cs" />
