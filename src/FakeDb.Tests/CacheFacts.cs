@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace FakeDb.Tests
 {
@@ -23,11 +25,15 @@ namespace FakeDb.Tests
             public ObjectGraph ObjectGraph { get; private set; }
             public Cache Cache { get; private set; }
 
+            public IEnumerable<IMaterializationHook> MaterializationHooks {get;private set;}
+
             public CacheFixture()
             {
                 IdGenerator = new IdGenerator();
                 ObjectGraph = new ObjectGraph();
-                Cache = new Cache(IdGenerator, ObjectGraph);
+                MaterializationHooks = Enumerable.Empty<IMaterializationHook>();
+
+                Cache = new Cache(IdGenerator, ObjectGraph, MaterializationHooks);
             }
         }
     }

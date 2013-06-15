@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NSubstitute;
 using Xunit;
@@ -26,7 +27,7 @@ namespace FakeDb.Tests
             {
                 var fixture = new InMemorySetFixture();
 
-                var obj = new { };
+                var obj = new {};
                 fixture.InMemorySet.Add(obj);
                 fixture.InMemorySet.Add(obj);
                 fixture.InMemorySet.Add(obj);
@@ -46,7 +47,7 @@ namespace FakeDb.Tests
                 fixture.InMemorySet.Add(person);
 
                 Assert.Equal(person, fixture.InMemorySet.Items.Single());
-                Assert.Equal(address, fixture.Cache.For(typeof(Address)).Items.Single());
+                Assert.Equal(address, fixture.Cache.For(typeof (Address)).Items.Single());
             }
 
             [Fact]
@@ -71,6 +72,26 @@ namespace FakeDb.Tests
                 fixture.IdGenerator.Received(1).Identify(person);
                 fixture.IdGenerator.Received(1).Identify(address);
             }
+
+            [Fact]
+            public void InvokesMaterializationHook()
+            {
+                var address = new Address();
+                var person = new Person
+                    {
+                        Address = address
+                    };
+
+                var fixture = new InMemorySetFixture();
+                var hook = Substitute.For<IMaterializationHook>();
+
+                fixture.MaterializationHooks.Add(hook);
+
+                fixture.InMemorySet.Add(person);
+
+                hook.Received(1).Execute(person);
+                hook.Received(1).Execute(address);
+            }
         }
 
         public class RemoveMethod
@@ -94,6 +115,7 @@ namespace FakeDb.Tests
             public ObjectGraph ObjectGraph { get; private set; }
             public Cache Cache { get; private set; }
             public InMemorySet InMemorySet { get; private set; }
+            public IList<IMaterializationHook> MaterializationHooks { get; private set; }
 
             public InMemorySetFixture()
             {
@@ -101,8 +123,11 @@ namespace FakeDb.Tests
                 IdGenerator.Identify(null).ReturnsForAnyArgs(c => c.Args()[0]);
 
                 ObjectGraph = new ObjectGraph();
-                Cache = new Cache(IdGenerator, ObjectGraph);
-                InMemorySet = new InMemorySet(IdGenerator, Cache, ObjectGraph);
+
+                MaterializationHooks = new List<IMaterializationHook>();
+
+                Cache = new Cache(IdGenerator, ObjectGraph, MaterializationHooks);
+                InMemorySet = new InMemorySet(IdGenerator, Cache, ObjectGraph, MaterializationHooks);
             }
         }
     }
