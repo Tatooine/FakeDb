@@ -40,7 +40,7 @@ namespace FakeDb
 
             _set.Add(identified);
 
-            Meterialize(identified);
+            Materialize(identified);
 
             return item;
         }
@@ -53,7 +53,7 @@ namespace FakeDb
 
         public ISet<object> Items { get { return _set; } }
 
-        void Meterialize(object item)
+        void Materialize(object item)
         {
             foreach (var obj in _objectGraph.Traverse(item))
             {
