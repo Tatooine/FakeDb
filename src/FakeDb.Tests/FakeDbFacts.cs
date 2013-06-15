@@ -10,7 +10,7 @@ namespace FakeDb.Tests
             [Fact]
             public void CanMapId()
             {
-                var db = new FakeDb();
+                var db = new Db();
                 db.MapId((Car c) => c.CarId);
                 
                 var car = new Car();

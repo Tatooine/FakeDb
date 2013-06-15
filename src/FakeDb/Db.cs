@@ -5,12 +5,12 @@ using System.Linq.Expressions;
 
 namespace FakeDb
 {
-    public class FakeDb
+    public class Db
     {
         readonly ICache _cache;
         readonly IIdPropertyFinder _idPropertyFinder;
 
-        public FakeDb(IIdGenerator idGenerator = null, IEnumerable<IMaterializationHook> materializationHooks = null)
+        public Db(IIdGenerator idGenerator = null, IEnumerable<IMaterializationHook> materializationHooks = null)
         {
             _idPropertyFinder = new IdPropertyFinder();
             _cache = new Cache(idGenerator ?? new IdGenerator(_idPropertyFinder), new ObjectGraph(),
@@ -22,7 +22,7 @@ namespace FakeDb
             return _cache.For(typeof (TEntity));
         }
 
-        public FakeDb MapId<TType, TProperty>(Expression<Func<TType, TProperty>> idPropExpr) 
+        public Db MapId<TType, TProperty>(Expression<Func<TType, TProperty>> idPropExpr) 
             where TType: class 
             where TProperty : struct
         {
