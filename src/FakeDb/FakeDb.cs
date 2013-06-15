@@ -1,21 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace FakeDb
 {
     public class FakeDb
     {
         readonly ICache _cache;
+        readonly IIdPropertyFinder _idPropertyFinder;
 
         public FakeDb(IIdGenerator idGenerator = null, IEnumerable<IMaterializationHook> materializationHooks = null)
         {
-            _cache = new Cache(idGenerator ?? new IdGenerator(), new ObjectGraph(),
+            _idPropertyFinder = new IdPropertyFinder();
+            _cache = new Cache(idGenerator ?? new IdGenerator(_idPropertyFinder), new ObjectGraph(),
                                materializationHooks ?? Enumerable.Empty<IMaterializationHook>());
         }
 
         public IInMemorySet Set<TEntity>() where TEntity : class
         {
             return _cache.For(typeof (TEntity));
+        }
+
+        public FakeDb MapId<TType, TProperty>(Expression<Func<TType, TProperty>> idPropExpr) 
+            where TType: class 
+            where TProperty : struct
+        {
+            var idPropName = ((MemberExpression) idPropExpr.Body).Member.Name;
+
+            _idPropertyFinder.RegisterIdName(typeof(TType), idPropName);
+
+            return this;
         }
     }
 }
