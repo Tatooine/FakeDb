@@ -36,7 +36,7 @@ namespace FakeDb.Builtin.MaterializationHooks
 
                 var id = idProperty.GetValue(relatedObject, null);
 
-                fkProperty.SetValue(@object, Convert.ChangeType(id, fkProperty.PropertyType), null);
+                fkProperty.SetValue(@object, id, null);
             }
         }
     }
