@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builtin\MaterializationHooks\ForeignKeyInitializerFacts.cs" />
     <Compile Include="CacheFacts.cs" />
     <Compile Include="InMemorySetFacts.cs" />
     <Compile Include="IdGeneratorFacts.cs" />
