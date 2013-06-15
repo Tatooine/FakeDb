@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheFacts.cs" />
+    <Compile Include="FakeDbFacts.cs" />
+    <Compile Include="IdPropertyFinderFacts.cs" />
     <Compile Include="InMemorySetFacts.cs" />
     <Compile Include="IdGeneratorFacts.cs" />
     <Compile Include="IFixture.cs" />
