@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="FakeDb : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>FakeDb</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/buddhike/FakeDb">View on GitHub</a>
+
+          <h1 id="project_title">FakeDb</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/buddhike/FakeDb/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/buddhike/FakeDb/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Fake DB is a simple library to help writing unit tests with objects which are presumably retrieved via an ORM library.</p>
+
+<h3>
+<a name="what-does-it-do" class="anchor" href="#what-does-it-do"><span class="octicon octicon-link"></span></a>What does it do?</h3>
+
+<p>When you create an instance of FakeDb</p>
+
+<div class="highlight"><pre><span class="k">using</span> <span class="nn">FakeDb</span><span class="p">;</span>
+
+<span class="kt">var</span> <span class="n">db</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Db</span><span class="p">();</span>
+</pre></div>
+
+<p>And then add instances to the appropriate set</p>
+
+<div class="highlight"><pre><span class="kt">var</span> <span class="k">set</span> <span class="p">=</span> <span class="n">db</span><span class="p">.</span><span class="n">Set</span><span class="p">&lt;</span><span class="n">Person</span><span class="p">&gt;();</span>
+
+<span class="k">set</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">Person</span> 
+                  <span class="p">{</span> 
+                      <span class="n">Firtname</span> <span class="p">=</span> <span class="s">"Bob"</span><span class="p">,</span> 
+                      <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Address</span> 
+                      <span class="p">{</span> 
+                          <span class="n">Street</span> <span class="p">=</span> <span class="s">"Fifth Ave"</span> 
+                      <span class="p">}</span> 
+                 <span class="p">});</span>
+
+</pre></div>
+
+<p>It will</p>
+
+<ul>
+<li>Assign a unique value to Id property of Person (if there's an Id property).</li>
+<li>Assign a unique value to Id property of all objects in the graph starting from Person (Bob's Address in this example). </li>
+<li>Keeps track of all objects in the graph.
+For example, if code under test performs a query like:</li>
+</ul><div class="highlight"><pre><span class="n">_dbContext</span><span class="p">.</span><span class="n">Set</span><span class="p">&lt;</span><span class="n">Address</span><span class="p">&gt;.</span><span class="n">Where</span><span class="p">(</span><span class="n">a</span> <span class="p">=&gt;</span> <span class="n">a</span><span class="p">.</span><span class="n">Street</span> <span class="p">==</span> <span class="s">"Fifth Ave"</span><span class="p">);</span>
+</pre></div>
+
+<p>The results will include the Address we constructed in property initializer.</p>
+
+<h3>
+<a name="how-to-use-it-with-entity-framework" class="anchor" href="#how-to-use-it-with-entity-framework"><span class="octicon octicon-link"></span></a>How to use it with Entity Framework</h3>
+
+<p>FakeDb is not tied to any ORM. It's just a generic object store. Users will have to create the appropriate ORM wrapper around FakeDb's InMemorySet. Here's how to do that for Entity Framework using IDbSet (Some members without an implementation are removed for brevity).</p>
+
+<p>This example assumes that we use a generic repository like this.</p>
+
+<div class="highlight"><pre>
+<span class="k">public</span> <span class="k">interface</span> <span class="n">IDbContext</span>
+<span class="p">{</span>
+    <span class="n">IDbSet</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">Set</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;();</span>
+<span class="p">}</span>
+
+</pre></div>
+
+<p>Create a class which implements IDbSet and a constructor to inject an IInMemorySet we retrieve from FakeDb.</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">InMemoryDbSet</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;:</span> <span class="n">IDbSet</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="k">where</span> <span class="n">T</span> <span class="p">:</span> <span class="k">class</span>
+<span class="err">{</span>
+    <span class="k">readonly</span> <span class="n">FakeDb</span><span class="p">.</span><span class="n">IInMemorySet</span> <span class="n">_internalSet</span><span class="p">;</span>
+    <span class="k">public</span> <span class="nf">InMemoryDbSet</span><span class="p">(</span><span class="n">IInMemorySet</span> <span class="n">internalSet</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_internalSet</span> <span class="p">=</span> <span class="n">internalSet</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">T</span> <span class="nf">Add</span><span class="p">(</span><span class="n">T</span> <span class="n">entity</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_internalSet</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">entity</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">T</span> <span class="nf">Attach</span><span class="p">(</span><span class="n">T</span> <span class="n">entity</span><span class="p">)</span>
+    <span class="p">{</span>
+       <span class="k">return</span> <span class="n">entity</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">T</span> <span class="nf">Remove</span><span class="p">(</span><span class="n">T</span> <span class="n">entity</span><span class="p">)</span>
+    <span class="p">{</span>
+       <span class="k">if</span> <span class="p">(</span><span class="n">_internalSet</span><span class="p">.</span><span class="n">Remove</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span>
+           <span class="k">throw</span> <span class="k">new</span> <span class="nf">InvalidOperationException</span><span class="p">(</span><span class="s">"Item does not exist."</span><span class="p">);</span>
+
+       <span class="k">return</span> <span class="n">entity</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">IEnumerator</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">GetEnumerator</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">_internalSet</span><span class="p">.</span><span class="n">Items</span><span class="p">.</span><span class="n">Cast</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;().</span><span class="n">GetEnumerator</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="n">IEnumerator</span> <span class="n">IEnumerable</span><span class="p">.</span><span class="n">GetEnumerator</span><span class="p">()</span>
+    <span class="p">{</span>
+       <span class="k">return</span> <span class="n">_internalSet</span><span class="p">.</span><span class="n">Items</span><span class="p">.</span><span class="n">GetEnumerator</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">System</span><span class="p">.</span><span class="n">Linq</span><span class="p">.</span><span class="n">Expressions</span><span class="p">.</span><span class="n">Expression</span> <span class="n">Expression</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_internalSet</span><span class="p">.</span><span class="n">Items</span><span class="p">.</span><span class="n">Cast</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;().</span><span class="n">AsQueryable</span><span class="p">().</span><span class="n">Expression</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">IQueryProvider</span> <span class="n">Provider</span>
+    <span class="p">{</span>
+        <span class="k">get</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_internalSet</span><span class="p">.</span><span class="n">Items</span><span class="p">.</span><span class="n">Cast</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;().</span><span class="n">AsQueryable</span><span class="p">().</span><span class="n">Provider</span><span class="p">;</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Create an implementation of IDbContext to return InMemoryDbSet. </p>
+
+<div class="highlight"><pre><span class="k">using</span> <span class="nn">FakeDb</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="n">TestDbContext</span> <span class="p">:</span> <span class="n">IDbContext</span>
+<span class="p">{</span>
+    <span class="k">readonly</span> <span class="n">Db</span> <span class="n">_db</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Db</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="n">IDbSet</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span> <span class="n">Set</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">InMemoryDbSet</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;(</span><span class="n">_db</span><span class="p">.</span><span class="n">Set</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">FakeDb maintained by <a href="https://github.com/buddhike">buddhike</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
