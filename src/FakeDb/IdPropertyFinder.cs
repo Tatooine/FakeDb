@@ -15,29 +15,35 @@ namespace FakeDb
     class IdPropertyFinder : IIdPropertyFinder
     {
         public const string DefaultIdName = "Id";
-        Dictionary<Type, string> _idMap =new Dictionary<Type, string>();
+        Dictionary<Type, PropertyInfo> _idPropMap = new Dictionary<Type, PropertyInfo>();
 
         public PropertyInfo Find(Type type)
         {
             if(type == null)
                 throw new ArgumentNullException("type");
 
-            string idName;
-            if (!_idMap.TryGetValue(type, out idName))
-                idName = DefaultIdName;
+            PropertyInfo idProp;
+            if (!_idPropMap.TryGetValue(type, out idProp))
+            {
+                idProp = type.GetProperty(DefaultIdName, ReflectionSettings.AllInstance);
+                _idPropMap.Add(type, idProp);
+            }
 
-            return type.GetProperty(idName, ReflectionSettings.AllInstance);
+            return idProp;
         }
 
-        public void RegisterIdName(Type type, string name)
+        public void RegisterIdName(Type type, string idName)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            if (name == null)
-                throw new ArgumentNullException("name");
+            if (idName == null)
+                throw new ArgumentNullException("idName");
 
-            _idMap.Add(type, name);
+            var prop = type.GetProperty(idName, ReflectionSettings.AllInstance);
+
+            if(prop != null)
+                _idPropMap.Add(type, prop);
         }
     }
 }
