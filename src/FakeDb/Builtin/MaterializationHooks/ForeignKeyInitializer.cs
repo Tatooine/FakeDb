@@ -5,6 +5,15 @@ namespace FakeDb.Builtin.MaterializationHooks
 {
     public class ForeignKeyInitializer : IMaterializationHook
     {
+        readonly IIdPropertyFinder _idPropertyFinder;
+        readonly IForeignKeyFinder _foreignKeyFinder;
+
+        public ForeignKeyInitializer(IIdPropertyFinder idPropertyFinder = null, IForeignKeyFinder foreignKeyFinder = null)
+        {
+            _idPropertyFinder = idPropertyFinder ?? new IdPropertyFinder();
+            _foreignKeyFinder = foreignKeyFinder ?? new ForeignKeyFinderFinder();
+        }
+
         public void Execute(object @object)
         {
             if (@object == null) throw new ArgumentNullException("object");
@@ -16,7 +25,7 @@ namespace FakeDb.Builtin.MaterializationHooks
                 if (!property.PropertyType.IsClass)
                     continue;
 
-                var fkProperty = properties.SingleOrDefault(p => p.Name == property.Name + "Id");
+                var fkProperty = _foreignKeyFinder.Find(property);
 
                 if (fkProperty == null)
                     continue;
@@ -24,9 +33,9 @@ namespace FakeDb.Builtin.MaterializationHooks
                 var relatedObject = property.GetValue(@object, null);
 
                 if(relatedObject == null)
-                    continue;                
+                    continue;
 
-                var idProperty = relatedObject.GetType().GetProperty("Id");
+                var idProperty = _idPropertyFinder.Find(property.PropertyType);
 
                 if (idProperty == null)
                     continue;
