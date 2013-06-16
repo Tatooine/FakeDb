@@ -22,8 +22,8 @@ namespace FakeDb
             return _cache.For(typeof (TEntity));
         }
 
-        public Db MapId<TType, TProperty>(Expression<Func<TType, TProperty>> idPropExpr) 
-            where TType: class 
+        public Db MapId<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> idPropExpr) 
+            where TEntity: class 
             where TProperty : struct
         {
             string idPropName;
@@ -36,7 +36,7 @@ namespace FakeDb
                 throw new ArgumentException("Invalid property expression. Please use the form as 'object.objId'", ex);
             }
 
-            _idPropertyFinder.RegisterIdName(typeof(TType), idPropName);
+            _idPropertyFinder.RegisterIdName(typeof(TEntity), idPropName);
 
             return this;
         }
