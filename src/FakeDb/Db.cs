@@ -27,7 +27,15 @@ namespace FakeDb
             where TType: class 
             where TProperty : struct
         {
-            var idPropName = ((MemberExpression) idPropExpr.Body).Member.Name;
+            string idPropName;
+            try
+            {
+                idPropName = ((MemberExpression) idPropExpr.Body).Member.Name;
+            }
+            catch(Exception ex)
+            {
+                throw new ArgumentException("Invalid property expression. Please use the form as 'object.objId'", ex);
+            }
 
             _idPropertyFinder.RegisterIdName(typeof(TType), idPropName);
 
