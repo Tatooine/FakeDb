@@ -10,10 +10,11 @@ namespace FakeDb
         readonly ICache _cache;
         readonly IIdPropertyFinder _idPropertyFinder;
 
-        public Db(IIdGenerator idGenerator = null, IEnumerable<IMaterializationHook> materializationHooks = null)
+        public Db(IEnumerable<IMaterializationHook> materializationHooks = null)
         {
             _idPropertyFinder = new IdPropertyFinder();
-            _cache = new Cache(idGenerator ?? new IdGenerator(_idPropertyFinder), new ObjectGraph(),
+
+            _cache = new Cache(new IdGenerator(_idPropertyFinder), new ObjectGraph(),
                                materializationHooks ?? Enumerable.Empty<IMaterializationHook>());
         }
 
