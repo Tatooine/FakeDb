@@ -26,9 +26,8 @@ namespace FakeDb.Tests
             [Fact]
             public void CanMapForeignKey()
             {
-                var db = new Db();
-                db.RegisterForeignKeyInitializer();
-                db.MapForeignKey((Person c) => c._AddressId, c => c.Address);
+                var db = new Db().WithForeignKeyInitializer()
+                                 .MapForeignKey((Person c) => c.Address, c => c._AddressId);
 
                 var p = new Person {Address = new Address()};
 

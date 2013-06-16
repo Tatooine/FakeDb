@@ -29,9 +29,10 @@ namespace FakeDb
             return _cache.For(typeof (TEntity));
         }
 
-        public void RegisterForeignKeyInitializer()
+        public Db WithForeignKeyInitializer()
         {
             _materializationHooks.Add(new ForeignKeyInitializer(_idPropertyFinder, _foreignKeyFinder));
+            return this;
         }
 
         public Db MapId<TEntity, TProperty>(Expression<Func<TEntity, TProperty>> idPropExpr) where TEntity: class 
@@ -43,12 +44,12 @@ namespace FakeDb
             return this;
         }
 
-        public Db MapForeignKey<TEntity, TProperty, TForeignKey>(Expression<Func<TEntity, TForeignKey>> foeignKeyExpr, Expression<Func<TEntity, TProperty>> propExpr)
+        public Db MapForeignKey<TEntity, TProperty, TForeignKey>(Expression<Func<TEntity, TProperty>> propExpr, Expression<Func<TEntity, TForeignKey>> foreignKeyPropExpr)
             where TEntity : class
             where TProperty : class
         {
             var propName = GetPropertyNameFromExpression(propExpr);
-            var fkName = GetPropertyNameFromExpression(foeignKeyExpr);
+            var fkName = GetPropertyNameFromExpression(foreignKeyPropExpr);
 
             _foreignKeyFinder.RegisterForeignKey(typeof(TEntity), fkName, propName);
 
