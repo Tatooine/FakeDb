@@ -3,12 +3,12 @@
   <metadata>
     <id>FakeDb</id>
     <version>0.1</version>
-    <title>Fake DB</title>
+    <title>cpaglobal-FakeDb</title>
     <description>In memory DB for unit testing.</description>
     <authors>Fake DB Contributers</authors>
     <owners>Fake DB Contributers</owners>
     <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-    <projectUrl>https://github.com/buddhike/FakeDb</projectUrl>    
+    <projectUrl>https://github.com/inprotech-dev/FakeDb</projectUrl>    
     <requireLicenseAcceptance>false</requireLicenseAcceptance>            
     <tags>Testing</tags>
   </metadata>
