@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>FakeDb</id>
-    <version>0.1</version>
+    <id>cpaglobal-FakeDb</id>
+    <version>0.2.19</version>
     <title>cpaglobal-FakeDb</title>
     <description>In memory DB for unit testing.</description>
     <authors>Fake DB Contributers</authors>
