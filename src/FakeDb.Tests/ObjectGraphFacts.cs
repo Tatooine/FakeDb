@@ -37,7 +37,7 @@ namespace FakeDb.Tests
 
                 var r = new ObjectGraph().Traverse(v).ToArray();
 
-                Assert.Equal(1, r.Length);
+                Assert.Single(r);
                 Assert.Contains(v, r);
             }
 

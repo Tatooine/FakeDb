@@ -1,15 +1,23 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>cpaglobal-FakeDb</id>
-    <version>0.2.19</version>
-    <title>cpaglobal-FakeDb</title>
-    <description>In memory DB for unit testing.</description>
-    <authors>Fake DB Contributers</authors>
-    <owners>Fake DB Contributers</owners>
-    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-    <projectUrl>https://github.com/inprotech-dev/FakeDb</projectUrl>    
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>            
-    <tags>Testing</tags>
-  </metadata>
+
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+		<projectUrl>https://github.com/inprotech-dev/FakeDb</projectUrl>
+		<description>In memory DB for unit testing.</description>
+		<description>$description$</description>
+		<tags>Testing</tags>
+		<dependencies>
+			<group targetFramework="net5.0" />
+			<group targetFramework="netstandard2.0">
+				<dependency id="NETStandard.Library" version="2.0.0" />
+			</group>
+		</dependencies>
+	</metadata>
 </package>
